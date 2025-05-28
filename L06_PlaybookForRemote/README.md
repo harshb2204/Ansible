@@ -43,3 +43,49 @@ Expected result:
     "ping": "pong"
 }
 ```
+
+- to use the initial yaml file to test connection we can just add all instead of localhost in the hosts part of the file or add the group.
+- should give ok status
+
+## Nginx Installation Playbook
+
+Here's a sample playbook to install and configure Nginx on your remote hosts:
+
+```yaml
+---
+- name: Install and start the service
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Installing nginx
+      apt:
+        name: nginx
+        state: present
+    - name: Starting the nginx service
+      service:
+        name: nginx
+        state: started
+        enabled: true
+```
+
+
+
+This playbook will:
+1. Install Nginx using apt package manager
+2. Start the Nginx service
+3. Enable Nginx to start automatically on system boot
+
+## Important Note About Privilege Escalation
+
+When installing packages using apt, you need root privileges. If you encounter an error like:
+
+```
+Installing packages via apt requires root privileges.
+Your playbook runs as user ubuntu (non-root).
+The apt module tries to run apt-get install nginx, but fails because it's not running as root.
+```
+
+To fix this, make sure your playbook includes `become: yes` at the play level (as shown in the example above) or at the task level. This tells Ansible to use sudo when running commands that require root privileges.
+
+
